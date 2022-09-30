@@ -17,3 +17,5 @@ path = "badc/source/main.rs"
 
 
 [dependencies]
+nom = "*"
+logos = "*"
