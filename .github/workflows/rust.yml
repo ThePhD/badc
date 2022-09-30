@@ -1,0 +1,38 @@
+name: Rust
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  lints:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: cargo fmt
+      run: |
+        if cargo fmt -- --check --files-with-diff; then
+          echo "All files correctly formatted."
+          exit
+        fi
+        echo "The above files are not properly formatted; rerun `cargo fmt`."
+        exit 1
+
+    - name: cargo clippy
+      run: cargo clippy --verbose
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: cargo test
+      run: cargo test --verbose --all
+    - name: cargo doc
+      run: cargo doc --verbose
