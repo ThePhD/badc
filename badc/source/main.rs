@@ -7,7 +7,7 @@ pub struct CompilationOptions {
   pub sources: Vec<bad::ProgramSource>,
 }
 
-fn main() -> () {
+fn main() {
   // TODO: parse from Command Line and/or JSON
   let options = CompilationOptions {
     sources: vec![ProgramSource::Path(PathBuf::from("./main.b"))],
