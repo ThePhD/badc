@@ -1,3 +1,9 @@
 ﻿/.vscode/
-/target/
+
 /.rust/
+/.cargo/
+/target/
+Cargo.lock
+
+/scratch/
+main.b
