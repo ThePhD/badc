@@ -1,11 +1,15 @@
+use std::path::PathBuf;
+use std::fs::File;
+use std::io::Stdin;
+
 pub enum ProgramSource {
-  Path(std::ffi::OsString),
-  File(std::fs::File),
-  Stdin(std::io::Stdin),
+  Path(PathBuf),
+  File(File),
+  Stdin(Stdin),
 }
 
 pub struct CompilationConfiguration {
-  pub sources: std::vec::Vec<ProgramSource>,
+  pub sources: Vec<ProgramSource>,
 }
 
 #[derive(Debug)]
@@ -17,12 +21,12 @@ pub enum Token {
   Semicolon,
   SingleQuote,
   Codepoint(char),
-  Identifier(std::string::String),
+  Identifier(String),
 }
 
 #[derive(Debug)]
 pub struct TokenList {
-  pub tokens: std::vec::Vec<Token>,
+  pub tokens: Vec<Token>,
 }
 
 #[derive(Debug)]
@@ -30,13 +34,13 @@ pub struct SyntaxTree {}
 
 pub fn lex(_config: &CompilationConfiguration) -> TokenList {
   let list: TokenList = TokenList {
-    tokens: std::vec::Vec::new(),
+    tokens: Vec::new(),
   };
   list
 }
 
 pub fn parse(
-  token_stream: TokenList,
+  _token_stream: TokenList,
   _config: &CompilationConfiguration,
 ) -> SyntaxTree {
   let tree = SyntaxTree {};
