@@ -1,0 +1,19 @@
+[package]
+name = "bad"
+authors = [ "Björkus Dorkus", "mcy" ]
+version = "0.0.0"
+edition = "2021"
+keywords = [ "bad", "b", "compiler", "shitpost", "shitcode" ]
+license = "CC0-1.0"
+
+[lib]
+name = "bad"
+path = "source/bad/bad.rs"
+
+
+[[bin]]
+name = "badc"
+path = "source/badc/badc.rs"
+
+
+[dependencies]
