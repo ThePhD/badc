@@ -1,6 +1,6 @@
 [package]
 name = "bad"
-authors = [ "Björkus Dorkus", "mcy" ]
+authors = [ "ThePhD", "mcy" ]
 version = "0.0.0"
 edition = "2021"
 keywords = [ "bad", "b", "compiler", "shitpost", "shitcode" ]
@@ -8,12 +8,12 @@ license = "CC0-1.0"
 
 [lib]
 name = "bad"
-path = "source/bad/bad.rs"
+path = "bad/source/lib.rs"
 
 
 [[bin]]
 name = "badc"
-path = "source/badc/badc.rs"
+path = "badc/source/main.rs"
 
 
 [dependencies]
