@@ -1,6 +1,6 @@
-use std::path::PathBuf;
 use std::fs::File;
 use std::io::Stdin;
+use std::path::PathBuf;
 
 pub enum ProgramSource {
   Path(PathBuf),
@@ -33,9 +33,7 @@ pub struct TokenList {
 pub struct SyntaxTree {}
 
 pub fn lex(_config: &CompilationConfiguration) -> TokenList {
-  let list: TokenList = TokenList {
-    tokens: Vec::new(),
-  };
+  let list: TokenList = TokenList { tokens: Vec::new() };
   list
 }
 
@@ -43,12 +41,11 @@ pub fn parse(
   _token_stream: TokenList,
   _config: &CompilationConfiguration,
 ) -> SyntaxTree {
-  let tree = SyntaxTree {};
-  tree
+  SyntaxTree {}
 }
 
 pub fn compile(config: &CompilationConfiguration) -> SyntaxTree {
-  let lex: TokenList = lex(&config);
-  let tree: SyntaxTree = parse(lex, &config);
+  let lex: TokenList = lex(config);
+  let tree: SyntaxTree = parse(lex, config);
   tree
 }
