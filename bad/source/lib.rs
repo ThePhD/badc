@@ -3,49 +3,49 @@ use std::io::Stdin;
 use std::path::PathBuf;
 
 pub enum ProgramSource {
-  Path(PathBuf),
-  File(File),
-  Stdin(Stdin),
+	Path(PathBuf),
+	File(File),
+	Stdin(Stdin),
 }
 
 pub struct CompilationConfiguration {
-  pub sources: Vec<ProgramSource>,
+	pub sources: Vec<ProgramSource>,
 }
 
 #[derive(Debug)]
 pub enum Token {
-  LeftParen,
-  RightParen,
-  LeftBrace,
-  RightBrace,
-  Semicolon,
-  SingleQuote,
-  Codepoint(char),
-  Identifier(String),
+	LeftParen,
+	RightParen,
+	LeftBrace,
+	RightBrace,
+	Semicolon,
+	SingleQuote,
+	Codepoint(char),
+	Identifier(String),
 }
 
 #[derive(Debug)]
 pub struct TokenList {
-  pub tokens: Vec<Token>,
+	pub tokens: Vec<Token>,
 }
 
 #[derive(Debug)]
 pub struct SyntaxTree {}
 
 pub fn lex(_config: &CompilationConfiguration) -> TokenList {
-  let list: TokenList = TokenList { tokens: Vec::new() };
-  list
+	let list: TokenList = TokenList { tokens: Vec::new() };
+	list
 }
 
 pub fn parse(
-  _token_stream: TokenList,
-  _config: &CompilationConfiguration,
+	_token_stream: TokenList,
+	_config: &CompilationConfiguration,
 ) -> SyntaxTree {
-  SyntaxTree {}
+	SyntaxTree {}
 }
 
 pub fn compile(config: &CompilationConfiguration) -> SyntaxTree {
-  let lex: TokenList = lex(config);
-  let tree: SyntaxTree = parse(lex, config);
-  tree
+	let lex: TokenList = lex(config);
+	let tree: SyntaxTree = parse(lex, config);
+	tree
 }
