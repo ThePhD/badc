@@ -17,5 +17,6 @@ path = "badc/source/main.rs"
 
 
 [dependencies]
+bumpalo = "3.11.0"
 nom = "*"
 logos = "*"

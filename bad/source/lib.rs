@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::Stdin;
 use std::path::PathBuf;
 
+pub mod ast;
+
 pub enum ProgramSource {
 	Path(PathBuf),
 	File(File),
