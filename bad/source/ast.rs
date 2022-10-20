@@ -74,7 +74,7 @@ impl Span {
 }
 
 /// A position in the source code marking the start of a `Span`.
-#[derive(Copy, Clone, Default)]
+#[derive(Copy, Clone, Default, Debug)]
 pub(crate) struct Mark {
 	offset: usize,
 	line: u32,
@@ -84,6 +84,7 @@ pub(crate) struct Mark {
 /// Internal representation of information associated with a span.
 ///
 /// Currently stored as AoS, but SoA may be a viable future optimization.
+#[derive(Debug)]
 struct RawSpan {
 	range: (usize, usize),
 	line: u32,
@@ -92,7 +93,7 @@ struct RawSpan {
 
 /// State for generating spans. This is broken out into a separate struct so
 /// that we can wrap it in a RefCell.
-#[derive(Default)]
+#[derive(Default, Debug)]
 struct SpanState {
 	// `Span`s index into this array.
 	raw_spans: Vec<RawSpan>,
@@ -104,6 +105,7 @@ struct SpanState {
 ///
 /// Keeps track of memory allocation, source code spans, and miscellaneous
 /// book-keeping for an AST.
+#[derive(Debug)]
 pub struct Context {
 	path: PathBuf,
 	source: String,
