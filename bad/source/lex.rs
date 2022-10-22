@@ -1,15 +1,23 @@
 use logos::Logos;
 
+use crate::context;
+
 #[derive(Logos, Debug)]
-pub enum Token {
-	#[regex(r"[ \t\n\f]")]
+pub enum TokenName {
+	#[regex(r"[ \t\f]+")]
 	Whitespace,
-	
-	#[regex(r"[a-zA-Z_]+[a-zA-Z0-9_]*")]
+	#[regex(r"(\r)?(\n)?")]
+	LineWhitespace,
+	#[regex(r"[a-zA-Z_][a-zA-Z0-9_]*")]
 	Identifier,
-	Symbol,
+	#[regex(r"[0-9]+")]
 	Number,
-	Comment,
+	#[regex(r"'[^']+'")]
+	StringLiteral,
+	#[token("/*")]
+	CommentStart,
+	#[token("*/")]
+	CommentEnd,
 	// Keywords
 	#[token("if")]
 	If,
@@ -84,4 +92,10 @@ pub enum Token {
 	ForwardSlash,
 	#[error]
 	Error,
+}
+
+#[derive(Debug)]
+pub struct Token {
+	pub name: TokenName,
+	pub span: context::Span
 }

@@ -1,14 +1,15 @@
 use core::panic;
-use std::borrow::Borrow;
 use std::fs::File;
 use std::io::{Read, Stdout};
 use std::path::PathBuf;
 
+use lex::TokenName;
 use lex::Token;
 use logos::Logos;
 
 pub mod ast;
 pub mod lex;
+pub mod context;
 
 pub enum ProgramSource {
 	Path(PathBuf),
@@ -46,14 +47,14 @@ pub enum Token {
 #[derive(Debug)]
 pub struct TokenList {
 	pub tokens: Vec<lex::Token>,
-	pub context: ast::Context,
+	pub context: context::Context,
 }
 
 impl TokenList {
 	pub fn new(path: PathBuf, source: String) -> TokenList {
 		Self {
 			tokens: Vec::new(),
-			context: ast::Context::new(path, source)
+			context: context::Context::new(path, source)
 		}
 	}
 }
@@ -63,22 +64,33 @@ pub struct SyntaxTree {}
 
 pub fn get_source_text(source: ProgramSource) -> (PathBuf, String) {
 	let mut source_text: String = String::new();
-	let mut source_path: PathBuf = PathBuf::new();
+	let source_path: PathBuf;
 	match source {
 		ProgramSource::Path(pathbuf) => { source_path = pathbuf.clone(); source_text = std::fs::read_to_string(pathbuf.as_path()).unwrap() },
-		ProgramSource::File(mut file) => { source_path = "<file?handle?>".into(); file.read_to_string(&mut source_text); },
-		ProgramSource::Stdin(mut stdin) => { source_path = "<stdin>".into(); stdin.read_to_string(&mut source_text); }
+		ProgramSource::File(mut file) => { source_path = "<file?handle?>".into(); file.read_to_string(&mut source_text).unwrap(); },
+		ProgramSource::Stdin(mut stdin) => { source_path = "<stdin>".into(); stdin.read_to_string(&mut source_text).unwrap(); }
 	};
 	(source_path, source_text)
 }
 
-pub fn lex(source_path: PathBuf, source_text: String, config: &CompilationConfiguration) -> TokenList {
-	let mut list: TokenList = TokenList::new(source_path, source_text);
-	let logos_lex = Token::lexer(list.context.source()).spanned();
-	for tok_and_range in logos_lex {
+pub fn lex(input_path: PathBuf, input_source: String, _config: &CompilationConfiguration) -> TokenList {
+	let mut list: TokenList = TokenList::new(input_path, input_source);
+	let source : &str = list.context.source();
+	let source_path : &std::path::Path = list.context.path();
+	let spanned_tokens = TokenName::lexer(list.context.source()).spanned();
+	for tok_and_range in spanned_tokens {
 		match tok_and_range {
-			(Token::Error, _range) => panic!("unrecognized sequence of text during scanning/lexing!"),
-			(tok , _range) => list.tokens.push(tok)
+			(lex::TokenName::Error, range) => {
+				panic!("{:?}:({:?},{:?}) - Error B00000\n\tunrecognized sequence of text during scanning/lexing of sequence '{}'", &source_path, list.context.human_line(), list.context.human_column(), &source[range.start..range.end])
+			},
+			(token_name , range) => {
+				let progress: usize = range.end - range.start;
+				list.context.advance_cursor(progress);
+				let start = list.context.mark();
+				let span_marker = list.context.span(start);
+				let token: Token = lex::Token{name: token_name, span: span_marker};
+				list.tokens.push(token);
+			},
 		}
 	};
 	list
