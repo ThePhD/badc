@@ -12,12 +12,14 @@ pub enum TokenName {
 	Identifier,
 	#[regex(r"[0-9]+")]
 	Number,
-	#[regex(r"'[^']+'")]
+	#[regex(r"'[^'\\]*(?:\\.[^'\\]*)*'")]
 	StringLiteral,
 	#[token("/*")]
 	CommentStart,
 	#[token("*/")]
 	CommentEnd,
+	//#[regex(r"/\*.*\*/")]
+	//Comment,
 	// Keywords
 	#[token("if")]
 	If,
