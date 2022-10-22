@@ -17,6 +17,10 @@ path = "badc/source/main.rs"
 
 
 [dependencies]
-bumpalo = "3.11.0"
-nom = "*"
-logos = "*"
+[dependencies.bumpalo]
+version = ">=0,<99999999999999"
+[dependencies.logos]
+version = ">=0,<99999999999999"
+[dependencies.clap]
+version = ">=0,<99999999999999"
+features = ["derive"]

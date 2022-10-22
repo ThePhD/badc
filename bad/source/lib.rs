@@ -1,5 +1,5 @@
 use std::fs::File;
-use std::io::Stdin;
+use std::io::{Stdin, Stdout};
 use std::path::PathBuf;
 
 pub mod ast;
@@ -10,8 +10,17 @@ pub enum ProgramSource {
 	Stdin(Stdin),
 }
 
+pub enum ProgramSink {
+	Path(PathBuf),
+	File(File),
+	Stdout(Stdout),
+}
+
 pub struct CompilationConfiguration {
-	pub sources: Vec<ProgramSource>,
+	pub input: ProgramSource,
+	pub print_tokens: bool,
+	pub print_ast: bool,
+	pub output: ProgramSink,
 }
 
 #[derive(Debug)]
