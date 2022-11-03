@@ -21,6 +21,8 @@ pub struct CompilationConfiguration {
 	pub print_tokens: bool,
 	pub print_ast: bool,
 	pub output: ProgramSink,
+	pub print_tokens_output: ProgramSink,
+	pub print_ast_output: ProgramSink,
 }
 
 #[derive(Debug)]
