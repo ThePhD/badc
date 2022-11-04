@@ -47,16 +47,16 @@ fn main() {
 				target_path
 			}
 		};
-		let print_tokens_output = match args.print_tokens_output {
-			Some(ref target_path) => target_path.clone(),
+		let print_tokens_output = match &args.print_tokens_output {
+			Some(target_path) => target_path.clone(),
 			None => {
 				let mut target_path = output.clone();
 				target_path.push(".badc_tokens");
 				target_path
 			}
 		};
-		let print_ast_output = match args.print_ast_output {
-			Some(ref target_path) => target_path.clone(),
+		let print_ast_output = match &args.print_ast_output {
+			Some(target_path) => target_path.clone(),
 			None => {
 				let mut target_path = output.clone();
 				target_path.push(".badc_ast");
