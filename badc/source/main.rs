@@ -39,8 +39,8 @@ fn main() {
 		args.inputs.push(PathBuf::from("./main.b"));
 	}
 	for input in args.inputs {
-		let output = match args.output {
-			Some(ref target_path) => target_path.clone(),
+		let output = match &args.output {
+			Some(target_path) => target_path.clone(),
 			None => {
 				let mut target_path = input.clone();
 				target_path.push(".out");
