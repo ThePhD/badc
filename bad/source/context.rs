@@ -66,6 +66,25 @@ impl Span {
 		}
 		Displayable { span: self, ctx }
 	}
+
+	/// Uses the given `Context` to produce a [`fmt::Display`]able value,
+	/// particular for a range.
+	///
+	/// `Span` itself cannot be [`fmt::Display`], because we need a matching
+	/// `Context` to interpret it with.
+	pub fn display_range(self, ctx: &Context) -> impl fmt::Display + '_ {
+		struct Displayable<'ctx> {
+			span: Span,
+			ctx: &'ctx Context,
+		}
+		impl fmt::Display for Displayable<'_> {
+			fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+				let (line, col) = self.span.coords(self.ctx);
+				write!(f, "[{}:{}]", line + 1, col + 1)
+			}
+		}
+		Displayable { span: self, ctx }
+	}
 }
 
 /// A position in the source code marking the start of a `Span`.
@@ -105,9 +124,9 @@ pub struct Context {
 	path: PathBuf,
 	source: String,
 
-	// All AST nodes are allocated on this arena, to avoid hammering the heap and
-	// so that all nodes can simply contain references and slices directly, to
-	// aid pattern-matching.
+	// All AST nodes are allocated on this arena, to avoid hammering the heap
+	// and so that all nodes can simply contain references and slices directly,
+	// to aid pattern-matching.
 	pub(crate) arena: Bump,
 	spans: RefCell<SpanState>,
 }
@@ -172,9 +191,7 @@ impl Context {
 			col: start.col,
 		});
 
-		let index: u32 = spans
-			.raw_spans
-			.len()
+		let index: u32 = (spans.raw_spans.len() - 1)
 			.try_into()
 			.expect("ran out of span indices");
 		Span(index)
@@ -183,8 +200,8 @@ impl Context {
 	/// Advances the cursor.
 	///
 	/// This function takes `&self` because as AST nodes are created, they will
-	/// hold references into the arena, which locks up a lifetime for the overall
-	/// context, disallowing any `&mut` operations.
+	/// hold references into the arena, which locks up a lifetime for the
+	/// overall context, disallowing any `&mut` operations.
 	///
 	/// # Panics
 	///
@@ -201,5 +218,36 @@ impl Context {
 			}
 		}
 		spans.cursor.offset += len;
+	}
+
+	/// Creates a new mark, advances the cursor, and returns a span representing
+	/// the new marking plus cursor advancement.
+	///
+	/// It is effectively a shortcut for calling mark, advance_cursor, and span
+	/// in-order.
+	///
+	/// # Panics
+	///
+	/// Panics if `len > self.unread().len()`.
+	pub(crate) fn next_span(&self, len: usize) -> Span {
+		let start = self.mark();
+		self.advance_cursor(len);
+		self.span(start)
+	}
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Error {
+	MissingFile = 0x0000,
+	UnreadableFile = 0x0001,
+}
+
+impl std::fmt::Display for Error {
+	fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+		f.write_fmt(format_args!("B0-{:04x} - ", *self as u32))?;
+		match self {
+			Error::MissingFile => f.write_str("Missing file"),
+			Error::UnreadableFile => f.write_str("Unable to read file"),
+		}
 	}
 }

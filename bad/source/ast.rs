@@ -3,7 +3,7 @@
 //! The AST nodes somewhat reflect the canonical syntax specified in
 //! <https://www.bell-labs.com/usr/dmr/www/kbman.pdf> S2.1, with extensions.
 
-use crate::context;
+use crate::context::Span;
 
 /// A B program.
 ///
@@ -33,11 +33,11 @@ pub struct Global<'ctx> {
 	/// The name of the variable.
 	pub name: Id<'ctx>,
 	/// The declared size of this variable, if it is an array.
-	pub size: Option<(ArraySize<'ctx>, context::Span)>,
+	pub size: Option<(ArraySize<'ctx>, Span)>,
 	/// The initializers for this variable.
 	pub inits: &'ctx [InitVal<'ctx>],
 	/// The overall span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// The declared size of an array.
@@ -73,7 +73,7 @@ pub struct Func<'ctx> {
 	/// Note that this is *not* a block statement!
 	pub body: &'ctx [Stmt<'ctx>],
 	/// The overall span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A statement.
@@ -91,7 +91,7 @@ pub struct Stmt<'ctx> {
 	/// The kind of expression this is.
 	pub kind: StmtKind<'ctx>,
 	/// The overall span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A type of statement.
@@ -157,7 +157,7 @@ pub struct Expr<'ctx> {
 	/// The kind of expression this is.
 	pub kind: ExprKind<'ctx>,
 	/// The overall span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A type of expression.
@@ -281,7 +281,7 @@ pub struct Id<'ctx> {
 	/// The name of the identifier.
 	pub name: &'ctx str,
 	/// The identifier's span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// An (unsigned!) integer constant.
@@ -289,7 +289,7 @@ pub struct Int {
 	/// The value of the constant.
 	pub value: u128,
 	/// The constant's span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A character constant.
@@ -297,7 +297,7 @@ pub struct Char {
 	/// The value of the constant.
 	pub value: u8,
 	/// The constant's span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A string constant.
@@ -305,7 +305,7 @@ pub struct Str<'ctx> {
 	/// The value of the constant.
 	pub value: &'ctx str,
 	/// The constant's span.
-	pub span: context::Span,
+	pub span: Span,
 }
 
 /// A constant of some kind.
