@@ -1,64 +1,46 @@
-use std::fs::File;
-use std::io::{Stdin, Stdout};
+#![feature(is_some_and)]
+
+use std::io::*;
 use std::path::PathBuf;
 
 pub mod ast;
-
-pub enum ProgramSource {
-	Path(PathBuf),
-	File(File),
-	Stdin(Stdin),
-}
-
-pub enum ProgramSink {
-	Path(PathBuf),
-	File(File),
-	Stdout(Stdout),
-}
-
-pub struct CompilationConfiguration {
-	pub input: ProgramSource,
-	pub print_tokens: bool,
-	pub print_ast: bool,
-	pub output: ProgramSink,
-	pub print_tokens_output: ProgramSink,
-	pub print_ast_output: ProgramSink,
-}
-
-#[derive(Debug)]
-pub enum Token {
-	LeftParen,
-	RightParen,
-	LeftBrace,
-	RightBrace,
-	Semicolon,
-	SingleQuote,
-	Codepoint(char),
-	Identifier(String),
-}
-
-#[derive(Debug)]
-pub struct TokenList {
-	pub tokens: Vec<Token>,
-}
+pub mod context;
+pub mod lex;
+pub mod state;
 
 #[derive(Debug)]
 pub struct SyntaxTree {}
 
-pub fn lex(_config: &CompilationConfiguration) -> TokenList {
-	let list: TokenList = TokenList { tokens: Vec::new() };
-	list
+pub fn get_source_text(source: &mut state::ProgramSource) -> (PathBuf, String) {
+	match source {
+		state::ProgramSource::Path(pathbuf) => (
+			pathbuf.clone(),
+			std::fs::read_to_string(pathbuf.as_path()).unwrap(),
+		),
+		state::ProgramSource::File(file) => {
+			let mut buf: String = String::new();
+			file.read_to_string(&mut buf).unwrap();
+			("<file?handle?>".into(), buf)
+		}
+		state::ProgramSource::Stdin(stdin) => {
+			let mut buf: String = String::new();
+			stdin.read_to_string(&mut buf).unwrap();
+			("<stdin>".into(), buf)
+		}
+	}
 }
 
 pub fn parse(
-	_token_stream: TokenList,
-	_config: &CompilationConfiguration,
+	_token_stream: lex::TokenList,
+	_config: &state::CompilationConfiguration,
 ) -> SyntaxTree {
 	SyntaxTree {}
 }
 
-pub fn compile(config: &CompilationConfiguration) -> SyntaxTree {
-	let lex: TokenList = lex(config);
-	let tree: SyntaxTree = parse(lex, config);
+pub fn compile(mut config: state::CompilationConfiguration) -> SyntaxTree {
+	let source = &mut config.input;
+	let (source_path, source_text) = get_source_text(source);
+	let lex: lex::TokenList = lex::lex(source_path, source_text, &config);
+	let tree: SyntaxTree = parse(lex, &config);
 	tree
 }
