@@ -267,10 +267,10 @@ impl std::fmt::Display for TokenName {
 				CommentStyle::Block => "Block Comment",
 			},
 			TokenName::LineWhitespace(style) => match style {
-				LineWhitespaceStyle::CarriageReturn => " Carriage Return \\r",
-				LineWhitespaceStyle::LineFeed => "Line Feed\\n",
+				LineWhitespaceStyle::CarriageReturn => " Newline \\r",
+				LineWhitespaceStyle::LineFeed => "Newline \\n",
 				LineWhitespaceStyle::CarriageReturnLineFeed => {
-					"Carriage Return, Line Feed \\r\\n"
+					"Newline \\r\\n"
 				}
 			},
 			TokenName::Error => "Unrecognized Token",
